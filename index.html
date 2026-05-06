@@ -3,225 +3,528 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>OVAEL</title>
+  <meta name="description" content="SAMO AI Corporation — the world's first strictly AI-powered weapons company. Six fully autonomous, OVAEL AI-native weapon systems across Air, Land, and Sea." />
+  <meta name="theme-color" content="#07080a" />
+  <title>SAMO AI Corporation — Intelligence is the Ultimate Weapon</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600;9..144,800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600;9..144,800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div class="progress-bar" id="progressBar"></div>
   <div class="cursor-glow" id="cursorGlow"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <div class="ticker" aria-hidden="false">
+    <div class="ticker-inner">
+      <span class="dot"></span>
+      <span class="mono">JORDAN</span>
+      <span class="sep">/</span>
+      <span class="mono">HYPERFORGE</span>
+      <span class="sep">/</span>
+      <span class="mono">OVAEL AI NATIVE</span>
+      <span class="sep">/</span>
+      <span class="mono">EST. 2024</span>
+      <span class="spacer"></span>
+      <span class="mono live">LIVE · OPS</span>
+    </div>
+  </div>
 
   <nav class="nav">
     <div class="nav-inner">
-      <a href="#" class="nav-logo reveal" data-delay="0">OVAEL</a>
-      <ul class="nav-links">
-        <li class="reveal" data-delay="100"><a href="#essence">Essence</a></li>
-        <li class="reveal" data-delay="150"><a href="#craft">Craft</a></li>
-        <li class="reveal" data-delay="200"><a href="#vision">Vision</a></li>
-        <li class="reveal" data-delay="250"><a href="#contact">Contact</a></li>
+      <a href="#" class="nav-logo">
+        <span class="logo-mark" aria-hidden="true">◣</span>
+        <span class="logo-text">SAMO</span>
+        <span class="logo-sub">/ OVAEL AI</span>
+      </a>
+      <ul class="nav-links" role="menu">
+        <li role="none"><a href="#air" role="menuitem">Air</a></li>
+        <li role="none"><a href="#land" role="menuitem">Land</a></li>
+        <li role="none"><a href="#sea" role="menuitem">Sea</a></li>
+        <li role="none"><a href="factory.html" role="menuitem">Factory</a></li>
+        <li role="none"><a href="#regions" role="menuitem">Regions</a></li>
+        <li role="none"><a href="#plan" role="menuitem">Plan</a></li>
+        <li role="none"><a href="#about" role="menuitem">About</a></li>
+        <li role="none"><a href="#store" role="menuitem">Store</a></li>
       </ul>
+      <a href="#procure" class="nav-cta">
+        <span>Procure Now</span>
+        <span class="cta-arrow" aria-hidden="true">→</span>
+      </a>
     </div>
   </nav>
 
+  <!-- ============== HERO ============== -->
   <section class="hero" id="hero">
     <div class="hero-grid" aria-hidden="true"></div>
+    <div class="hero-frame" aria-hidden="true">
+      <span class="tick tl"></span>
+      <span class="tick tr"></span>
+      <span class="tick bl"></span>
+      <span class="tick br"></span>
+    </div>
+    <div class="hero-orb" aria-hidden="true"></div>
+
     <div class="hero-content">
-      <span class="eyebrow reveal" data-delay="100">— Est. 2026</span>
+      <div class="hero-meta reveal" data-delay="100">
+        <span class="mono">SAMO · AI CORPORATION</span>
+        <span class="sep">·</span>
+        <span class="mono">DOCTRINE 04.01</span>
+        <span class="sep">·</span>
+        <span class="mono">CLEARANCE OPEN</span>
+      </div>
+
       <h1 class="hero-title">
-        <span class="word" data-letter-reveal>O</span>
-        <span class="word" data-letter-reveal>V</span>
-        <span class="word" data-letter-reveal>A</span>
-        <span class="word" data-letter-reveal>E</span>
-        <span class="word" data-letter-reveal>L</span>
+        <span class="line line-1">
+          <span class="word" data-letter-reveal>S</span>
+          <span class="word" data-letter-reveal>A</span>
+          <span class="word" data-letter-reveal>M</span>
+          <span class="word" data-letter-reveal>O</span>
+          <span class="word italic" data-letter-reveal>&nbsp;AI</span>
+        </span>
+        <span class="line line-2">
+          <span class="word" data-letter-reveal>C</span>
+          <span class="word" data-letter-reveal>O</span>
+          <span class="word" data-letter-reveal>R</span>
+          <span class="word" data-letter-reveal>P</span>
+          <span class="word" data-letter-reveal>O</span>
+          <span class="word" data-letter-reveal>R</span>
+          <span class="word" data-letter-reveal>A</span>
+          <span class="word" data-letter-reveal>T</span>
+          <span class="word" data-letter-reveal>I</span>
+          <span class="word" data-letter-reveal>O</span>
+          <span class="word" data-letter-reveal>N</span>
+        </span>
       </h1>
-      <p class="hero-sub reveal" data-delay="900">
-        A studio of quiet precision. Designing the spaces between thought and form.
+
+      <p class="hero-tagline reveal" data-delay="900">
+        Intelligence is the <em>Ultimate Weapon.</em>
       </p>
-      <div class="scroll-indicator reveal" data-delay="1200">
-        <span>Scroll</span>
-        <span class="line"></span>
+
+      <p class="hero-sub reveal" data-delay="1000">
+        The world's first strictly AI-powered weapons company.
+        <span class="hero-sub-em">Powered by OVAEL.</span>
+      </p>
+
+      <div class="hero-cta reveal" data-delay="1100">
+        <a href="#systems" class="btn btn-primary">
+          <span>Explore All Systems</span>
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="#about" class="btn btn-ghost">
+          <span>About OVAEL AI</span>
+          <span class="arrow" aria-hidden="true">↗</span>
+        </a>
+      </div>
+
+      <div class="hero-foot reveal" data-delay="1200">
+        <div class="scroll-indicator">
+          <span>Scroll</span>
+          <span class="line"></span>
+        </div>
+        <div class="hero-domains">
+          <span class="dom-chip" data-dom="air"><span class="chip-dot"></span>Air</span>
+          <span class="dom-chip" data-dom="land"><span class="chip-dot"></span>Land</span>
+          <span class="dom-chip" data-dom="sea"><span class="chip-dot"></span>Sea</span>
+        </div>
       </div>
     </div>
-    <div class="hero-parallax" data-parallax="0.3"></div>
   </section>
 
-  <section class="marquee-section">
-    <div class="marquee" aria-hidden="true">
+  <!-- ============== MARQUEE ============== -->
+  <section class="marquee-section" aria-label="Capabilities">
+    <div class="marquee">
       <div class="marquee-track">
-        <span>Minimal</span><span aria-hidden="true">◦</span>
-        <span>Considered</span><span aria-hidden="true">◦</span>
-        <span>Timeless</span><span aria-hidden="true">◦</span>
-        <span>Precise</span><span aria-hidden="true">◦</span>
-        <span>Minimal</span><span aria-hidden="true">◦</span>
-        <span>Considered</span><span aria-hidden="true">◦</span>
-        <span>Timeless</span><span aria-hidden="true">◦</span>
-        <span>Precise</span><span aria-hidden="true">◦</span>
+        <span>5 AI-Native Systems</span><span class="m-sep" aria-hidden="true">·</span>
+        <span>Air · Land · Sea</span><span class="m-sep" aria-hidden="true">·</span>
+        <span>OVAEL AI Level 4</span><span class="m-sep" aria-hidden="true">·</span>
+        <span>HyperForge · Jordan</span><span class="m-sep" aria-hidden="true">·</span>
+        <span>Export Ready</span><span class="m-sep" aria-hidden="true">·</span>
+        <span>Fully Autonomous</span><span class="m-sep" aria-hidden="true">·</span>
+        <span>70% Lower Unit Cost</span><span class="m-sep" aria-hidden="true">·</span>
+        <span class="italic">Intelligence is the Ultimate Weapon</span><span class="m-sep" aria-hidden="true">·</span>
+        <span>5 AI-Native Systems</span><span class="m-sep" aria-hidden="true">·</span>
+        <span>Air · Land · Sea</span><span class="m-sep" aria-hidden="true">·</span>
+        <span>OVAEL AI Level 4</span><span class="m-sep" aria-hidden="true">·</span>
+        <span>HyperForge · Jordan</span><span class="m-sep" aria-hidden="true">·</span>
+        <span>Export Ready</span><span class="m-sep" aria-hidden="true">·</span>
+        <span>Fully Autonomous</span><span class="m-sep" aria-hidden="true">·</span>
+        <span>70% Lower Unit Cost</span><span class="m-sep" aria-hidden="true">·</span>
+        <span class="italic">Intelligence is the Ultimate Weapon</span><span class="m-sep" aria-hidden="true">·</span>
       </div>
     </div>
   </section>
 
-  <section class="essence" id="essence">
+  <!-- ============== SYSTEMS ============== -->
+  <section class="systems" id="systems">
     <div class="container">
-      <div class="section-header">
-        <span class="eyebrow reveal">01 — Essence</span>
-        <h2 class="section-title reveal" data-delay="100">
-          Form follows <em>silence</em>.
+      <header class="section-header reveal">
+        <span class="eyebrow">
+          <span class="eb-index">00</span>
+          <span class="eb-label">Systems · Full Inventory</span>
+        </span>
+        <h2 class="section-title">
+          Five domains.<br/>
+          <em>One intelligence.</em>
         </h2>
-      </div>
-      <div class="essence-body">
-        <p class="large-text reveal" data-delay="200">
-          We believe restraint is a discipline. Every curve, every interval, every pause is a decision — measured against the weight of what could be removed instead.
+        <p class="section-lede">
+          Autonomous platforms engineered to OVAEL AI Level 4 standards and manufactured at
+          HyperForge — our vertically integrated plant in Jordan's Industrial Gate Free Zone.
         </p>
-        <div class="essence-grid">
-          <div class="essence-card reveal" data-delay="200">
-            <span class="card-num">Ⅰ</span>
-            <h3>Intention</h3>
-            <p>Nothing is decorative. Every element exists because the work demanded it.</p>
+      </header>
+
+      <ol class="product-list" role="list">
+        <!-- ========== SUN ========== -->
+        <li class="product" data-dom="air" id="air">
+          <div class="product-visual" aria-hidden="true">
+            <div class="product-art art-sun">
+              <span class="art-ring"></span>
+              <span class="art-ring r2"></span>
+              <span class="art-core"></span>
+              <span class="art-trace"></span>
+            </div>
+            <div class="art-overlay">
+              <div class="hud-row"><span>TGT</span><span>SHAHED · SWARM</span></div>
+              <div class="hud-row"><span>MODE</span><span>INTERCEPT</span></div>
+              <div class="hud-row"><span>ENG</span><span>LOITER → TERMINAL</span></div>
+              <div class="hud-cross"></div>
+            </div>
           </div>
-          <div class="essence-card reveal" data-delay="350">
-            <span class="card-num">Ⅱ</span>
-            <h3>Material</h3>
-            <p>We study the grain of our medium — digital or physical — and let it speak.</p>
+          <div class="product-body">
+            <div class="product-head">
+              <div class="product-domain">
+                <span class="chip-dot"></span>
+                <span>Air Domain</span>
+              </div>
+              <span class="product-index mono">01 / 06</span>
+            </div>
+            <h3 class="product-name">
+              <span class="prefix">Ovael</span>
+              <span class="name">Sun</span>
+            </h3>
+            <p class="product-desc">
+              High-speed autonomous air defense interceptor —
+              neutralizes Shahed-type drones and swarms at 25 km.
+            </p>
+            <dl class="spec-grid">
+              <div class="spec"><dt>Range</dt><dd>25 km</dd></div>
+              <div class="spec"><dt>Speed</dt><dd>Mach 1.2</dd></div>
+              <div class="spec"><dt>Autonomy</dt><dd>OVAEL AI L4</dd></div>
+            </dl>
+            <div class="product-foot">
+              <span class="price">
+                <span class="currency">$</span>
+                <span class="amount">1,000</span>
+              </span>
+              <div class="product-actions">
+                <a href="#" class="btn btn-ghost btn-sm"><span>View System</span><span class="arrow">↗</span></a>
+                <a href="#procure" class="btn btn-solid btn-sm"><span>Procure</span><span class="arrow">→</span></a>
+              </div>
+            </div>
           </div>
-          <div class="essence-card reveal" data-delay="500">
-            <span class="card-num">Ⅲ</span>
-            <h3>Time</h3>
-            <p>Objects outlast their moment. We design for the decade after the launch.</p>
+        </li>
+
+        <!-- ========== SHADE ========== -->
+        <li class="product" data-dom="air">
+          <div class="product-visual" aria-hidden="true">
+            <div class="product-art art-shade">
+              <span class="delta d1"></span>
+              <span class="delta d2"></span>
+              <span class="delta d3"></span>
+            </div>
+            <div class="art-overlay">
+              <div class="hud-row"><span>PROFILE</span><span>LOITER STRIKE</span></div>
+              <div class="hud-row"><span>ENDURANCE</span><span>08:00:00</span></div>
+              <div class="hud-row"><span>RANGE</span><span>2,000+ KM</span></div>
+              <div class="hud-cross"></div>
+            </div>
           </div>
-        </div>
-      </div>
+          <div class="product-body">
+            <div class="product-head">
+              <div class="product-domain">
+                <span class="chip-dot"></span>
+                <span>Air Domain</span>
+              </div>
+              <span class="product-index mono">02 / 06</span>
+            </div>
+            <h3 class="product-name">
+              <span class="prefix">Ovael</span>
+              <span class="name">Shade</span>
+            </h3>
+            <p class="product-desc">
+              Autonomous loitering strike munition — precision saturation attack
+              at mass-producible cost.
+            </p>
+            <dl class="spec-grid">
+              <div class="spec"><dt>Range</dt><dd>2,000+ km</dd></div>
+              <div class="spec"><dt>Endurance</dt><dd>8 hrs</dd></div>
+              <div class="spec"><dt>Autonomy</dt><dd>OVAEL AI L4</dd></div>
+            </dl>
+            <div class="product-foot">
+              <span class="price">
+                <span class="currency">$</span>
+                <span class="amount">32,000</span>
+              </span>
+              <div class="product-actions">
+                <a href="#" class="btn btn-ghost btn-sm"><span>View System</span><span class="arrow">↗</span></a>
+                <a href="#procure" class="btn btn-solid btn-sm"><span>Procure</span><span class="arrow">→</span></a>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <!-- ========== HOUND ========== -->
+        <li class="product" data-dom="land" id="land">
+          <div class="product-visual" aria-hidden="true">
+            <div class="product-art art-hound">
+              <span class="quad q1"></span>
+              <span class="quad q2"></span>
+              <span class="quad q3"></span>
+              <span class="quad q4"></span>
+              <span class="quad body"></span>
+              <span class="quad head"></span>
+            </div>
+            <div class="art-overlay">
+              <div class="hud-row"><span>TERRAIN</span><span>ALL · EOD · RECON</span></div>
+              <div class="hud-row"><span>PAYLOAD</span><span>12 KG MODULAR</span></div>
+              <div class="hud-row"><span>GAIT</span><span>QUAD · STABILIZED</span></div>
+              <div class="hud-cross"></div>
+            </div>
+          </div>
+          <div class="product-body">
+            <div class="product-head">
+              <div class="product-domain">
+                <span class="chip-dot"></span>
+                <span>Land Domain</span>
+              </div>
+              <span class="product-index mono">03 / 06</span>
+            </div>
+            <h3 class="product-name">
+              <span class="prefix">Ovael</span>
+              <span class="name">Hound</span>
+            </h3>
+            <p class="product-desc">
+              Quadruped autonomous combat platform — reconnaissance, EOD,
+              and direct engagement in any terrain.
+            </p>
+            <dl class="spec-grid">
+              <div class="spec"><dt>Weight</dt><dd>65 kg</dd></div>
+              <div class="spec"><dt>Speed</dt><dd>12 km/h</dd></div>
+              <div class="spec"><dt>Autonomy</dt><dd>OVAEL AI L4</dd></div>
+            </dl>
+            <div class="product-foot">
+              <span class="price">
+                <span class="currency">$</span>
+                <span class="amount">10,000</span>
+              </span>
+              <div class="product-actions">
+                <a href="#" class="btn btn-ghost btn-sm"><span>View System</span><span class="arrow">↗</span></a>
+                <a href="#procure" class="btn btn-solid btn-sm"><span>Procure</span><span class="arrow">→</span></a>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <!-- ========== ATLAS ========== -->
+        <li class="product" data-dom="land">
+          <div class="product-visual" aria-hidden="true">
+            <div class="product-art art-atlas">
+              <span class="atl head"></span>
+              <span class="atl torso"></span>
+              <span class="atl arm-l"></span>
+              <span class="atl arm-r"></span>
+              <span class="atl leg-l"></span>
+              <span class="atl leg-r"></span>
+            </div>
+            <div class="art-overlay">
+              <div class="hud-row"><span>HEIGHT</span><span>1.80 M</span></div>
+              <div class="hud-row"><span>MASS</span><span>90 KG</span></div>
+              <div class="hud-row"><span>ROLE</span><span>MULTI · GROUND</span></div>
+              <div class="hud-cross"></div>
+            </div>
+          </div>
+          <div class="product-body">
+            <div class="product-head">
+              <div class="product-domain">
+                <span class="chip-dot"></span>
+                <span>Land Domain</span>
+              </div>
+              <span class="product-index mono">04 / 06</span>
+            </div>
+            <h3 class="product-name">
+              <span class="prefix">Ovael</span>
+              <span class="name">Atlas</span>
+            </h3>
+            <p class="product-desc">
+              Fully autonomous combat humanoid — precision multi-role ground
+              warfare platform. 1.8 m, 90 kg.
+            </p>
+            <dl class="spec-grid">
+              <div class="spec"><dt>Height</dt><dd>1.8 m</dd></div>
+              <div class="spec"><dt>Endurance</dt><dd>6 hrs</dd></div>
+              <div class="spec"><dt>Autonomy</dt><dd>OVAEL AI L4</dd></div>
+            </dl>
+            <div class="product-foot">
+              <span class="price">
+                <span class="currency">$</span>
+                <span class="amount">220,000</span>
+              </span>
+              <div class="product-actions">
+                <a href="#" class="btn btn-ghost btn-sm"><span>View System</span><span class="arrow">↗</span></a>
+                <a href="#procure" class="btn btn-solid btn-sm"><span>Procure</span><span class="arrow">→</span></a>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <!-- ========== MANTA ========== -->
+        <li class="product" data-dom="sea" id="sea">
+          <div class="product-visual" aria-hidden="true">
+            <div class="product-art art-manta">
+              <span class="manta-wing"></span>
+              <span class="manta-body"></span>
+              <span class="manta-tail"></span>
+              <span class="manta-wake"></span>
+            </div>
+            <div class="art-overlay">
+              <div class="hud-row"><span>DEPTH</span><span>800 M</span></div>
+              <div class="hud-row"><span>STATE</span><span>SUBMERGED</span></div>
+              <div class="hud-row"><span>ENDUR</span><span>WEEKS</span></div>
+              <div class="hud-cross"></div>
+            </div>
+          </div>
+          <div class="product-body">
+            <div class="product-head">
+              <div class="product-domain">
+                <span class="chip-dot"></span>
+                <span>Sea Domain</span>
+              </div>
+              <span class="product-index mono">05 / 06</span>
+            </div>
+            <h3 class="product-name">
+              <span class="prefix">Ovael</span>
+              <span class="name">Manta</span>
+            </h3>
+            <p class="product-desc">
+              Manta ray-shaped autonomous underwater strike platform —
+              1,200 km submerged range, weeks of endurance.
+            </p>
+            <dl class="spec-grid">
+              <div class="spec"><dt>Range</dt><dd>1,200 km</dd></div>
+              <div class="spec"><dt>Depth</dt><dd>800 m</dd></div>
+              <div class="spec"><dt>Autonomy</dt><dd>OVAEL AI L4</dd></div>
+            </dl>
+            <div class="product-foot">
+              <span class="price">
+                <span class="currency">$</span>
+                <span class="amount">280,000</span>
+              </span>
+              <div class="product-actions">
+                <a href="#" class="btn btn-ghost btn-sm"><span>View System</span><span class="arrow">↗</span></a>
+                <a href="#procure" class="btn btn-solid btn-sm"><span>Procure</span><span class="arrow">→</span></a>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ol>
     </div>
   </section>
 
-  <section class="pinned-section" id="craft">
-    <div class="pinned-wrapper">
-      <div class="pinned-visual">
-        <div class="orb" data-rotate></div>
-        <div class="orb-line" data-rotate-reverse></div>
-      </div>
-      <div class="pinned-panels">
-        <div class="panel">
-          <span class="eyebrow">02 — Craft</span>
-          <h2>Studies in stillness.</h2>
-          <p>A slower rhythm. Forms that hold their breath.</p>
-        </div>
-        <div class="panel">
-          <span class="eyebrow">02.1</span>
-          <h2>Identity.</h2>
-          <p>Marks that carry meaning across scale, surface, and century.</p>
-        </div>
-        <div class="panel">
-          <span class="eyebrow">02.2</span>
-          <h2>Interface.</h2>
-          <p>Screens that feel like paper — weightless, considered, quiet.</p>
-        </div>
-        <div class="panel">
-          <span class="eyebrow">02.3</span>
-          <h2>Object.</h2>
-          <p>Things held in the hand. Pieces that improve with use.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="gallery" id="gallery">
+  <!-- ============== STATS ============== -->
+  <section class="stats" id="factory">
     <div class="container">
-      <h2 class="section-title reveal">Selected works</h2>
-      <div class="gallery-grid">
-        <figure class="gallery-item reveal" data-delay="0">
-          <div class="gallery-img" data-hue="12"></div>
-          <figcaption>Astra — Identity system · 2024</figcaption>
-        </figure>
-        <figure class="gallery-item reveal" data-delay="120">
-          <div class="gallery-img" data-hue="220"></div>
-          <figcaption>Meridian — Editorial · 2024</figcaption>
-        </figure>
-        <figure class="gallery-item reveal" data-delay="240">
-          <div class="gallery-img" data-hue="45"></div>
-          <figcaption>Noto Hall — Wayfinding · 2025</figcaption>
-        </figure>
-        <figure class="gallery-item reveal" data-delay="360">
-          <div class="gallery-img" data-hue="160"></div>
-          <figcaption>Halcyon — Product · 2025</figcaption>
-        </figure>
-      </div>
-    </div>
-  </section>
-
-  <section class="vision" id="vision">
-    <div class="container">
-      <div class="vision-stack">
-        <span class="eyebrow reveal">03 — Vision</span>
-        <p class="huge-text">
-          <span data-split-word>Design</span>
-          <span data-split-word>is</span>
-          <span data-split-word>the</span>
-          <span data-split-word>quiet</span>
-          <span data-split-word>rearrangement</span>
-          <span data-split-word>of</span>
-          <span data-split-word>attention.</span>
-        </p>
-        <div class="vision-meta reveal" data-delay="200">
-          <span>— A note from the studio</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="numbers">
-    <div class="container">
-      <div class="numbers-grid">
+      <header class="section-header">
+        <span class="eyebrow reveal">
+          <span class="eb-index">01</span>
+          <span class="eb-label">HyperForge · Jordan</span>
+        </span>
+        <h2 class="section-title reveal" data-delay="100">
+          Vertically integrated,<br/>
+          <em>sovereignly scaled.</em>
+        </h2>
+      </header>
+      <div class="stats-grid">
         <div class="stat reveal">
-          <span class="stat-num" data-count="42">0</span>
-          <span class="stat-label">Projects realised</span>
+          <span class="stat-num" data-count="70">0</span>
+          <span class="stat-unit">%</span>
+          <span class="stat-label">Lower unit cost vs. incumbents</span>
         </div>
         <div class="stat reveal" data-delay="120">
-          <span class="stat-num" data-count="18">0</span>
-          <span class="stat-label">Cities touched</span>
+          <span class="stat-num" data-count="4">0</span>
+          <span class="stat-label">OVAEL AI Autonomy Level</span>
         </div>
         <div class="stat reveal" data-delay="240">
-          <span class="stat-num" data-count="7">0</span>
-          <span class="stat-label">Years of practice</span>
+          <span class="stat-num" data-count="5">0</span>
+          <span class="stat-label">AI-native weapon systems</span>
         </div>
         <div class="stat reveal" data-delay="360">
-          <span class="stat-num" data-count="1">0</span>
-          <span class="stat-label">Unifying principle</span>
+          <span class="stat-num" data-count="3">0</span>
+          <span class="stat-label">Warfighting domains covered</span>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="contact" id="contact">
-    <div class="container">
-      <p class="eyebrow reveal">04 — Contact</p>
-      <h2 class="contact-title">
-        <span data-letter-reveal>L</span>
-        <span data-letter-reveal>e</span>
-        <span data-letter-reveal>t</span>
+  <!-- ============== FINAL CTA ============== -->
+  <section class="cta" id="procure">
+    <div class="container cta-inner">
+      <span class="eyebrow reveal">
+        <span class="eb-index">02</span>
+        <span class="eb-label">SAMO AI Corporation · HyperForge · Jordan</span>
+      </span>
+      <h2 class="cta-title">
+        <span data-letter-reveal>I</span><span data-letter-reveal>n</span><span data-letter-reveal>t</span><span data-letter-reveal>e</span><span data-letter-reveal>l</span><span data-letter-reveal>l</span><span data-letter-reveal>i</span><span data-letter-reveal>g</span><span data-letter-reveal>e</span><span data-letter-reveal>n</span><span data-letter-reveal>c</span><span data-letter-reveal>e</span>
         <span class="space">&nbsp;</span>
-        <span data-letter-reveal>u</span>
-        <span data-letter-reveal>s</span>
+        <span data-letter-reveal>i</span><span data-letter-reveal>s</span>
         <span class="space">&nbsp;</span>
-        <span data-letter-reveal>b</span>
-        <span data-letter-reveal>e</span>
-        <span data-letter-reveal>g</span>
-        <span data-letter-reveal>i</span>
-        <span data-letter-reveal>n</span>
-        <span data-letter-reveal>.</span>
+        <span data-letter-reveal>t</span><span data-letter-reveal>h</span><span data-letter-reveal>e</span>
+        <br/>
+        <span class="italic">
+          <span data-letter-reveal>U</span><span data-letter-reveal>l</span><span data-letter-reveal>t</span><span data-letter-reveal>i</span><span data-letter-reveal>m</span><span data-letter-reveal>a</span><span data-letter-reveal>t</span><span data-letter-reveal>e</span>
+          <span class="space">&nbsp;</span>
+          <span data-letter-reveal>W</span><span data-letter-reveal>e</span><span data-letter-reveal>a</span><span data-letter-reveal>p</span><span data-letter-reveal>o</span><span data-letter-reveal>n</span><span data-letter-reveal>.</span>
+        </span>
       </h2>
-      <a href="mailto:studio@ovael.com" class="contact-link reveal" data-delay="300">
-        studio@ovael.com
-        <span class="arrow">→</span>
-      </a>
+      <p class="cta-lede reveal" data-delay="300">
+        Six fully autonomous, OVAEL AI-native weapon systems spanning every
+        warfighting domain — manufactured at HyperForge at
+        <strong>70% lower unit cost.</strong>
+      </p>
+      <div class="cta-actions reveal" data-delay="400">
+        <a href="#systems" class="btn btn-primary btn-lg">
+          <span>View All Systems</span>
+          <span class="arrow">→</span>
+        </a>
+        <a href="mailto:procurement@samo.ai" class="btn btn-ghost btn-lg">
+          <span>Contact Procurement</span>
+          <span class="arrow">↗</span>
+        </a>
+      </div>
     </div>
   </section>
 
-  <footer class="footer">
-    <div class="container footer-inner">
-      <span>© 2026 Ovael Studio</span>
-      <span>Designed in quiet.</span>
+  <!-- ============== FOOTER ============== -->
+  <footer class="footer" id="about">
+    <div class="container">
+      <div class="footer-top">
+        <a href="#" class="footer-logo">
+          <span class="logo-mark" aria-hidden="true">◣</span>
+          <span>SAMO · OVAEL AI</span>
+        </a>
+        <ul class="footer-links">
+          <li><a href="#store">Store</a></li>
+          <li><a href="factory.html">Factory</a></li>
+          <li><a href="#regions">Regions</a></li>
+          <li><a href="#plan">Plan</a></li>
+          <li><a href="#about">About</a></li>
+        </ul>
+      </div>
+      <div class="footer-rule"></div>
+      <div class="footer-bottom">
+        <span class="mono">© 2026 SAMO AI Corporation · All Rights Reserved</span>
+        <span class="mono">Jordan Industrial Gate Free Zone</span>
+      </div>
     </div>
   </footer>
 

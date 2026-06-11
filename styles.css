@@ -590,6 +590,39 @@ body {
   flex-wrap: wrap;
 }
 
+/* ---------- Robot gallery card ---------- */
+.gallery-img--robot {
+  display: block;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0d0d18 0%, #1a1a30 50%, #0a0a14 100%);
+  transition: transform 1.2s var(--ease), box-shadow 0.4s ease;
+}
+.gallery-img--robot::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(68,170,255,0.18), transparent 60%),
+    radial-gradient(circle at 20% 80%, rgba(136,170,255,0.12), transparent 50%);
+  pointer-events: none;
+}
+.gallery-img--robot::after { display: none; }
+.gallery-img--robot:hover { box-shadow: 0 0 40px rgba(68,170,255,0.2); }
+.gallery-robot-label {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+  font-family: var(--sans);
+  transition: color 0.3s ease;
+}
+.gallery-img--robot:hover .gallery-robot-label { color: #fff; }
+
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

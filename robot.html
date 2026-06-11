@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>OVAEL — Humanoid Robot</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0d0d10;overflow:hidden;font-family:'Inter',system-ui,sans-serif}
+#canvas-container{width:100vw;height:100vh;position:relative}
+canvas{display:block}
+#ui{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none}
+.label{position:absolute;top:28px;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none}
+.label h1{font-size:13px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.35);font-weight:400}
+.label p{font-size:11px;letter-spacing:.15em;color:rgba(255,255,255,.18);margin-top:6px}
+.controls{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;gap:16px;pointer-events:all}
+.btn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:10px 20px;cursor:pointer;transition:all .3s;border-radius:2px}
+.btn:hover{background:rgba(255,255,255,.1);color:#fff}
+.btn.active{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.3);color:#fff}
+.info{position:absolute;bottom:80px;left:50%;transform:translateX(-50%);font-size:11px;letter-spacing:.14em;color:rgba(255,255,255,.2);text-transform:uppercase;text-align:center}
+.corner{position:absolute;font-size:10px;letter-spacing:.14em;color:rgba(255,255,255,.18);text-transform:uppercase}
+.corner.tl{top:28px;left:32px}
+.corner.tr{top:28px;right:32px;text-align:right}
+.corner.bl{bottom:28px;left:32px}
+.corner.br{bottom:28px;right:32px;text-align:right}
+.crosshair{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:20px;height:20px;pointer-events:none;opacity:.15}
+.crosshair::before,.crosshair::after{content:'';position:absolute;background:white}
+.crosshair::before{width:1px;height:100%;left:50%;transform:translateX(-50%)}
+.crosshair::after{height:1px;width:100%;top:50%;transform:translateY(-50%)}
+</style>
+</head>
+<body>
+<div id="canvas-container"></div>
+<div id="ui">
+  <div class="label">
+    <h1>OVAEL — Unit 01</h1>
+    <p>Humanoid Series · 2026</p>
+  </div>
+  <div class="corner tl">Drag to orbit</div>
+  <div class="corner tr">Scroll to zoom</div>
+  <div class="corner bl">OVAEL Robotics</div>
+  <div class="corner br" id="polycount">Rendering…</div>
+  <div class="info">Interactive 3D Preview</div>
+  <div class="crosshair"></div>
+  <div class="controls">
+    <button class="btn active" id="btn-orbit" onclick="setMode('orbit')">Orbit</button>
+    <button class="btn" id="btn-front" onclick="setView('front')">Front</button>
+    <button class="btn" id="btn-side" onclick="setView('side')">Side</button>
+    <button class="btn" id="btn-back" onclick="setView('back')">Back</button>
+    <button class="btn" id="btn-anim" onclick="toggleAnim()">Animate</button>
+  </div>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+/* ─── Renderer ─────────────────────────────────────────── */
+const container = document.getElementById('canvas-container');
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+container.appendChild(renderer.domElement);
+
+/* ─── Scene ─────────────────────────────────────────────── */
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0d0d10);
+scene.fog = new THREE.Fog(0x0d0d10, 18, 40);
+
+/* ─── Camera ────────────────────────────────────────────── */
+const camera = new THREE.PerspectiveCamera(42, window.innerWidth / window.innerHeight, 0.1, 100);
+camera.position.set(0, 1.6, 6.5);
+
+/* ─── Controls ──────────────────────────────────────────── */
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.set(0, 1.0, 0);
+controls.enableDamping = true;
+controls.dampingFactor = 0.06;
+controls.minDistance = 2;
+controls.maxDistance = 14;
+controls.maxPolarAngle = Math.PI * 0.88;
+
+/* ─── Materials ─────────────────────────────────────────── */
+const matBody = new THREE.MeshStandardMaterial({
+  color: 0xd8d8d8,
+  roughness: 0.18,
+  metalness: 0.55,
+  envMapIntensity: 1.2
+});
+const matBodyDark = new THREE.MeshStandardMaterial({
+  color: 0x1a1a22,
+  roughness: 0.35,
+  metalness: 0.8,
+  envMapIntensity: 1.0
+});
+const matJoint = new THREE.MeshStandardMaterial({
+  color: 0x888899,
+  roughness: 0.4,
+  metalness: 0.7
+});
+const matVisor = new THREE.MeshStandardMaterial({
+  color: 0x000510,
+  roughness: 0.05,
+  metalness: 0.9,
+  emissive: 0x001840,
+  emissiveIntensity: 0.6
+});
+const matChestOrb = new THREE.MeshStandardMaterial({
+  color: 0xffffff,
+  roughness: 0.1,
+  metalness: 0.3,
+  emissive: 0x8fb8ff,
+  emissiveIntensity: 0.4
+});
+const matChestRing = new THREE.MeshStandardMaterial({
+  color: 0xaaaacc,
+  roughness: 0.25,
+  metalness: 0.6
+});
+const matAccent = new THREE.MeshStandardMaterial({
+  color: 0x3a3a50,
+  roughness: 0.5,
+  metalness: 0.6
+});
+const matFloor = new THREE.MeshStandardMaterial({
+  color: 0x111116,
+  roughness: 0.9,
+  metalness: 0.1
+});
+
+/* ─── Helpers ───────────────────────────────────────────── */
+function mesh(geo, mat) {
+  const m = new THREE.Mesh(geo, mat);
+  m.castShadow = true;
+  m.receiveShadow = true;
+  return m;
+}
+function add(parent, child, x=0, y=0, z=0, rx=0, ry=0, rz=0, sx=1, sy=1, sz=1) {
+  child.position.set(x, y, z);
+  child.rotation.set(rx, ry, rz);
+  child.scale.set(sx, sy, sz);
+  parent.add(child);
+  return child;
+}
+function ring(ri, ro, h, mat, segs=32) {
+  const shape = new THREE.Shape();
+  shape.absarc(0, 0, ro, 0, Math.PI * 2, false);
+  const hole = new THREE.Path();
+  hole.absarc(0, 0, ri, 0, Math.PI * 2, true);
+  shape.holes.push(hole);
+  const geo = new THREE.ExtrudeGeometry(shape, {
+    depth: h, bevelEnabled: false
+  });
+  geo.translate(0, 0, -h / 2);
+  return mesh(geo, mat);
+}
+
+/* ─── Robot root ────────────────────────────────────────── */
+const robot = new THREE.Group();
+scene.add(robot);
+
+/* ════════════════════════════════════════════════════════
+   HEAD
+════════════════════════════════════════════════════════ */
+const headGroup = new THREE.Group();
+robot.add(headGroup);
+headGroup.position.set(0, 3.05, 0);
+
+// Skull — elongated sphere
+const skullGeo = new THREE.SphereGeometry(0.42, 48, 48);
+skullGeo.scale(1, 1.18, 0.95);
+const skull = mesh(skullGeo, matBody);
+headGroup.add(skull);
+
+// Visor slot
+const visorGeo = new THREE.BoxGeometry(0.52, 0.07, 0.14);
+const visor = mesh(visorGeo, matVisor);
+visor.position.set(0, 0.04, 0.38);
+headGroup.add(visor);
+
+// Visor glow line inside
+const glowGeo = new THREE.BoxGeometry(0.46, 0.025, 0.04);
+const glowMat = new THREE.MeshStandardMaterial({
+  color: 0x44aaff, emissive: 0x44aaff, emissiveIntensity: 2.5,
+  roughness: 0.1, metalness: 0
+});
+const glow = mesh(glowGeo, glowMat);
+glow.position.set(0, 0.04, 0.44);
+headGroup.add(glow);
+
+// Head seam line
+const seamGeo = new THREE.TorusGeometry(0.38, 0.008, 8, 64);
+const seam = mesh(seamGeo, matJoint);
+seam.rotation.x = Math.PI / 2;
+seam.position.set(0, 0.0, 0);
+headGroup.add(seam);
+
+/* ─── Neck ──────────────────────────────────────────────── */
+const neckGroup = new THREE.Group();
+robot.add(neckGroup);
+neckGroup.position.set(0, 2.6, 0);
+
+const neckGeo = new THREE.CylinderGeometry(0.13, 0.16, 0.38, 32);
+const neck = mesh(neckGeo, matJoint);
+neckGroup.add(neck);
+
+// Neck rings
+[-0.14, 0.0, 0.14].forEach(y => {
+  const r = ring(0.13, 0.17, 0.04, matBodyDark);
+  r.rotation.x = Math.PI / 2;
+  r.position.set(0, y, 0);
+  neckGroup.add(r);
+});
+
+/* ════════════════════════════════════════════════════════
+   TORSO
+════════════════════════════════════════════════════════ */
+const torsoGroup = new THREE.Group();
+robot.add(torsoGroup);
+torsoGroup.position.set(0, 1.8, 0);
+
+// Upper chest — tapered box
+const chestGeo = new THREE.BoxGeometry(0.92, 0.72, 0.44);
+chestGeo.scale(1, 1, 1);
+const chest = mesh(chestGeo, matBody);
+chest.position.set(0, 0.16, 0);
+torsoGroup.add(chest);
+
+// Chest bevel edges
+const chest2Geo = new THREE.CylinderGeometry(0.46, 0.46, 0.72, 4, 1);
+chest2Geo.scale(1, 1, 0.96);
+const chest2 = mesh(chest2Geo, matBody);
+chest2.position.set(0, 0.16, 0);
+torsoGroup.add(chest2);
+
+// Chest plate (front panel)
+const plateFrontGeo = new THREE.BoxGeometry(0.72, 0.6, 0.04);
+const plateFront = mesh(plateFrontGeo, matBody);
+plateFront.position.set(0, 0.16, 0.225);
+torsoGroup.add(plateFront);
+
+// Chest circle emblem
+const orbRingGeo = new THREE.TorusGeometry(0.1, 0.018, 16, 64);
+const orbRing = mesh(orbRingGeo, matChestRing);
+orbRing.position.set(0, 0.18, 0.25);
+torsoGroup.add(orbRing);
+
+const orbCoreGeo = new THREE.CircleGeometry(0.075, 48);
+const orbCore = mesh(orbCoreGeo, matChestOrb);
+orbCore.position.set(0, 0.18, 0.255);
+torsoGroup.add(orbCore);
+
+// Inner ring
+const orbInnerGeo = new THREE.TorusGeometry(0.055, 0.008, 8, 48);
+const orbInner = mesh(orbInnerGeo, matChestRing);
+orbInner.position.set(0, 0.18, 0.258);
+torsoGroup.add(orbInner);
+
+// Shoulder collar
+[-0.46, 0.46].forEach(x => {
+  const colGeo = new THREE.CylinderGeometry(0.16, 0.16, 0.1, 32);
+  const col = mesh(colGeo, matJoint);
+  col.position.set(x, 0.44, 0);
+  torsoGroup.add(col);
+});
+
+// Abdomen
+const abdGeo = new THREE.CylinderGeometry(0.33, 0.30, 0.34, 32);
+const abd = mesh(abdGeo, matBody);
+abd.position.set(0, -0.22, 0);
+torsoGroup.add(abd);
+
+// Waist accent
+const waistGeo = new THREE.CylinderGeometry(0.30, 0.28, 0.10, 32);
+const waist = mesh(waistGeo, matAccent);
+waist.position.set(0, -0.43, 0);
+torsoGroup.add(waist);
+
+// Back panel detail
+const backPanelGeo = new THREE.BoxGeometry(0.62, 0.5, 0.04);
+const backPanel = mesh(backPanelGeo, matBodyDark);
+backPanel.position.set(0, 0.16, -0.225);
+torsoGroup.add(backPanel);
+
+// Spine segments on back
+for (let i = 0; i < 5; i++) {
+  const spGeo = new THREE.BoxGeometry(0.08, 0.06, 0.05);
+  const sp = mesh(spGeo, matJoint);
+  sp.position.set(0, 0.36 - i * 0.14, -0.25);
+  torsoGroup.add(sp);
+}
+
+/* ════════════════════════════════════════════════════════
+   PELVIS
+════════════════════════════════════════════════════════ */
+const pelvisGroup = new THREE.Group();
+robot.add(pelvisGroup);
+pelvisGroup.position.set(0, 1.22, 0);
+
+const pelvisGeo = new THREE.CylinderGeometry(0.28, 0.32, 0.28, 32);
+const pelvis = mesh(pelvisGeo, matBody);
+pelvisGroup.add(pelvis);
+
+// Hip connectors
+[-0.3, 0.3].forEach(x => {
+  const hipGeo = new THREE.SphereGeometry(0.12, 24, 24);
+  const hip = mesh(hipGeo, matJoint);
+  hip.position.set(x, -0.06, 0);
+  pelvisGroup.add(hip);
+});
+
+// Pelvis accent panels
+[-0.18, 0.18].forEach(x => {
+  const panGeo = new THREE.BoxGeometry(0.18, 0.2, 0.08);
+  const pan = mesh(panGeo, matAccent);
+  pan.position.set(x, 0.0, 0.26);
+  pan.rotation.y = x > 0 ? 0.2 : -0.2;
+  pelvisGroup.add(pan);
+});
+
+/* ════════════════════════════════════════════════════════
+   ARMS  (mirrored)
+════════════════════════════════════════════════════════ */
+function buildArm(side) {
+  const s = side === 'L' ? -1 : 1;
+  const armRoot = new THREE.Group();
+  robot.add(armRoot);
+  armRoot.position.set(s * 0.58, 2.44, 0);
+
+  // Shoulder sphere
+  const shoulderGeo = new THREE.SphereGeometry(0.155, 32, 32);
+  const shoulder = mesh(shoulderGeo, matJoint);
+  armRoot.add(shoulder);
+
+  // Upper arm
+  const uaGeo = new THREE.CylinderGeometry(0.115, 0.1, 0.58, 32);
+  const ua = mesh(uaGeo, matBody);
+  ua.position.set(0, -0.38, 0);
+  armRoot.add(ua);
+
+  // Upper arm panels
+  [0, Math.PI / 2, Math.PI, -Math.PI / 2].forEach((ry, i) => {
+    const panGeo = new THREE.BoxGeometry(0.09, 0.3, 0.02);
+    const pan = mesh(panGeo, i % 2 === 0 ? matBody : matAccent);
+    pan.position.set(Math.sin(ry) * 0.115, -0.38, Math.cos(ry) * 0.115);
+    pan.rotation.y = ry;
+    armRoot.add(pan);
+  });
+
+  // Elbow joint
+  const elbowGroup = new THREE.Group();
+  elbowGroup.position.set(0, -0.7, 0);
+  armRoot.add(elbowGroup);
+
+  const elbowGeo = new THREE.SphereGeometry(0.11, 24, 24);
+  const elbow = mesh(elbowGeo, matJoint);
+  elbowGroup.add(elbow);
+
+  // Elbow discs
+  [-0.06, 0.06].forEach(x => {
+    const discGeo = new THREE.CylinderGeometry(0.115, 0.115, 0.04, 32);
+    discGeo.rotateZ(Math.PI / 2);
+    const disc = mesh(discGeo, matBodyDark);
+    disc.position.set(x, 0, 0);
+    elbowGroup.add(disc);
+  });
+
+  // Forearm
+  const faGeo = new THREE.CylinderGeometry(0.095, 0.085, 0.52, 32);
+  const fa = mesh(faGeo, matBody);
+  fa.position.set(0, -0.34, 0);
+  elbowGroup.add(fa);
+
+  // Wrist joint
+  const wristGroup = new THREE.Group();
+  wristGroup.position.set(0, -0.62, 0);
+  elbowGroup.add(wristGroup);
+
+  const wristGeo = new THREE.SphereGeometry(0.085, 20, 20);
+  const wrist = mesh(wristGeo, matJoint);
+  wristGroup.add(wrist);
+
+  // Hand
+  buildHand(wristGroup, side);
+
+  return armRoot;
+}
+
+/* ─── Hand ──────────────────────────────────────────────── */
+function buildHand(parent, side) {
+  const s = side === 'L' ? -1 : 1;
+  const handGroup = new THREE.Group();
+  handGroup.position.set(0, -0.18, 0);
+  parent.add(handGroup);
+
+  // Palm
+  const palmGeo = new THREE.BoxGeometry(0.13, 0.14, 0.055);
+  const palm = mesh(palmGeo, matBody);
+  handGroup.add(palm);
+
+  // Fingers
+  const fingerData = [
+    { x: -0.045, len: 0.12, w: 0.028 },
+    { x: -0.015, len: 0.135, w: 0.028 },
+    { x:  0.015, len: 0.132, w: 0.028 },
+    { x:  0.045, len: 0.115, w: 0.026 },
+  ];
+  fingerData.forEach(fd => {
+    const fGroup = new THREE.Group();
+    fGroup.position.set(fd.x, -0.11, 0);
+    handGroup.add(fGroup);
+
+    // 3 phalanges
+    [0, 1, 2].forEach(seg => {
+      const segLen = fd.len * (seg === 0 ? 0.38 : seg === 1 ? 0.34 : 0.28);
+      const segGeo = new THREE.CapsuleGeometry(fd.w * 0.5, segLen, 6, 12);
+      const segM = mesh(segGeo, seg === 2 ? matJoint : matBody);
+      segM.position.set(0, -(segLen / 2 + seg * fd.len * 0.36 + 0.01), 0);
+      fGroup.add(segM);
+    });
+  });
+
+  // Thumb
+  const thumbGroup = new THREE.Group();
+  thumbGroup.position.set(s * -0.075, -0.04, 0.01);
+  thumbGroup.rotation.z = s * 0.5;
+  handGroup.add(thumbGroup);
+  [0, 1].forEach(seg => {
+    const segGeo = new THREE.CapsuleGeometry(0.016, 0.055, 6, 10);
+    const segM = mesh(segGeo, seg === 1 ? matJoint : matBody);
+    segM.position.set(0, -(0.055 / 2 + seg * 0.058), 0);
+    thumbGroup.add(segM);
+  });
+}
+
+buildArm('L');
+buildArm('R');
+
+/* ════════════════════════════════════════════════════════
+   LEGS  (mirrored)
+════════════════════════════════════════════════════════ */
+function buildLeg(side) {
+  const s = side === 'L' ? -1 : 1;
+  const legRoot = new THREE.Group();
+  robot.add(legRoot);
+  legRoot.position.set(s * 0.28, 1.06, 0);
+
+  // Hip sphere
+  const hipGeo = new THREE.SphereGeometry(0.14, 28, 28);
+  const hip = mesh(hipGeo, matJoint);
+  legRoot.add(hip);
+
+  // Upper leg (thigh)
+  const ulGeo = new THREE.CylinderGeometry(0.135, 0.118, 0.62, 32);
+  const ul = mesh(ulGeo, matBody);
+  ul.position.set(0, -0.41, 0);
+  legRoot.add(ul);
+
+  // Thigh front panel
+  const thighPanGeo = new THREE.BoxGeometry(0.16, 0.36, 0.04);
+  const thighPan = mesh(thighPanGeo, matBody);
+  thighPan.position.set(0, -0.38, 0.13);
+  legRoot.add(thighPan);
+
+  // Knee group
+  const kneeGroup = new THREE.Group();
+  kneeGroup.position.set(0, -0.75, 0);
+  legRoot.add(kneeGroup);
+
+  // Knee sphere
+  const kGeo = new THREE.SphereGeometry(0.125, 24, 24);
+  const knee = mesh(kGeo, matJoint);
+  kneeGroup.add(knee);
+
+  // Knee cap — distinct panel
+  const capGeo = new THREE.SphereGeometry(0.1, 24, 24);
+  capGeo.scale(1.1, 0.75, 0.7);
+  const cap = mesh(capGeo, matBody);
+  cap.position.set(0, 0, 0.09);
+  kneeGroup.add(cap);
+
+  // Knee accent ring
+  const kRingGeo = new THREE.TorusGeometry(0.1, 0.015, 8, 32);
+  const kRing = mesh(kRingGeo, matBodyDark);
+  kRing.position.set(0, 0, 0);
+  kRing.rotation.x = Math.PI / 2;
+  kneeGroup.add(kRing);
+
+  // Lower leg (shin)
+  const llGeo = new THREE.CylinderGeometry(0.105, 0.095, 0.58, 32);
+  const ll = mesh(llGeo, matBody);
+  ll.position.set(0, -0.4, 0);
+  kneeGroup.add(ll);
+
+  // Shin front panel
+  const shinPanGeo = new THREE.BoxGeometry(0.13, 0.32, 0.04);
+  const shinPan = mesh(shinPanGeo, matBody);
+  shinPan.position.set(0, -0.38, 0.1);
+  kneeGroup.add(shinPan);
+
+  // Ankle
+  const ankleGroup = new THREE.Group();
+  ankleGroup.position.set(0, -0.73, 0);
+  kneeGroup.add(ankleGroup);
+
+  const ankleGeo = new THREE.SphereGeometry(0.09, 20, 20);
+  const ankle = mesh(ankleGeo, matJoint);
+  ankleGroup.add(ankle);
+
+  // Foot
+  const footGroup = new THREE.Group();
+  footGroup.position.set(0, -0.1, 0.08);
+  ankleGroup.add(footGroup);
+
+  const footGeo = new THREE.BoxGeometry(0.16, 0.07, 0.34);
+  const roundFootGeo = new THREE.CapsuleGeometry(0.075, 0.2, 8, 16);
+  roundFootGeo.rotateZ(Math.PI / 2);
+  roundFootGeo.scale(1, 0.46, 1.7);
+  const foot = mesh(roundFootGeo, matBody);
+  footGroup.add(foot);
+
+  // Toe cap
+  const toeGeo = new THREE.SphereGeometry(0.075, 16, 16);
+  toeGeo.scale(1.0, 0.5, 0.85);
+  const toe = mesh(toeGeo, matBody);
+  toe.position.set(0, 0, 0.13);
+  footGroup.add(toe);
+
+  // Heel
+  const heelGeo = new THREE.SphereGeometry(0.065, 16, 16);
+  heelGeo.scale(0.9, 0.55, 0.85);
+  const heel = mesh(heelGeo, matAccent);
+  heel.position.set(0, -0.01, -0.12);
+  footGroup.add(heel);
+}
+
+buildLeg('L');
+buildLeg('R');
+
+/* ════════════════════════════════════════════════════════
+   ENVIRONMENT
+════════════════════════════════════════════════════════ */
+
+// Floor
+const floorGeo = new THREE.CircleGeometry(8, 64);
+const floor = mesh(floorGeo, matFloor);
+floor.rotation.x = -Math.PI / 2;
+floor.receiveShadow = true;
+scene.add(floor);
+
+// Floor grid ring
+for (let r = 1; r <= 4; r++) {
+  const rGeo = new THREE.TorusGeometry(r * 1.5, 0.008, 4, 80);
+  const rMesh = new THREE.Mesh(rGeo, new THREE.MeshBasicMaterial({ color: 0x1a1a28 }));
+  rMesh.rotation.x = -Math.PI / 2;
+  scene.add(rMesh);
+}
+
+// Floor line spokes
+for (let i = 0; i < 8; i++) {
+  const angle = (i / 8) * Math.PI * 2;
+  const points = [
+    new THREE.Vector3(0, 0.002, 0),
+    new THREE.Vector3(Math.cos(angle) * 6, 0.002, Math.sin(angle) * 6)
+  ];
+  const lGeo = new THREE.BufferGeometry().setFromPoints(points);
+  const lMat = new THREE.LineBasicMaterial({ color: 0x18181f });
+  scene.add(new THREE.Line(lGeo, lMat));
+}
+
+/* ─── Lighting ──────────────────────────────────────────── */
+
+// Ambient
+scene.add(new THREE.AmbientLight(0x8899cc, 0.55));
+
+// Key light — warm front
+const key = new THREE.DirectionalLight(0xfff0e8, 2.2);
+key.position.set(3, 6, 4);
+key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048);
+key.shadow.camera.near = 0.5;
+key.shadow.camera.far = 24;
+key.shadow.camera.left = -4;
+key.shadow.camera.right = 4;
+key.shadow.camera.top = 6;
+key.shadow.camera.bottom = -1;
+key.shadow.bias = -0.001;
+scene.add(key);
+
+// Fill light — cool left
+const fill = new THREE.DirectionalLight(0x99bbff, 0.9);
+fill.position.set(-4, 3, 1);
+scene.add(fill);
+
+// Rim light — back
+const rim = new THREE.DirectionalLight(0xaaddff, 1.3);
+rim.position.set(0, 4, -6);
+scene.add(rim);
+
+// Under — subtle bounce
+const bounce = new THREE.PointLight(0x334466, 0.8, 8);
+bounce.position.set(0, -0.5, 1);
+scene.add(bounce);
+
+// Chest orb glow point
+const orbLight = new THREE.PointLight(0x88aaff, 1.6, 2.5);
+orbLight.position.set(0, 1.98, 0.5);
+scene.add(orbLight);
+
+// Visor glow point
+const visorLight = new THREE.PointLight(0x44aaff, 1.2, 1.5);
+visorLight.position.set(0, 3.08, 0.6);
+scene.add(visorLight);
+
+// Environment map (procedural gradient)
+const envCanvas = document.createElement('canvas');
+envCanvas.width = 512; envCanvas.height = 512;
+const ctx = envCanvas.getContext('2d');
+const grad = ctx.createRadialGradient(256, 200, 0, 256, 256, 380);
+grad.addColorStop(0, '#334466');
+grad.addColorStop(0.5, '#111122');
+grad.addColorStop(1, '#080810');
+ctx.fillStyle = grad;
+ctx.fillRect(0, 0, 512, 512);
+const envTex = new THREE.CanvasTexture(envCanvas);
+envTex.mapping = THREE.EquirectangularReflectionMapping;
+scene.environment = envTex;
+
+/* ─── Resize ────────────────────────────────────────────── */
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+/* ─── View presets ──────────────────────────────────────── */
+let animRunning = false;
+let idleTime = 0;
+
+window.setView = (view) => {
+  const t = { front: [0, 1.6, 6.5], side: [6.5, 1.6, 0], back: [0, 1.6, -6.5] };
+  const pos = t[view];
+  if (!pos) return;
+  animateCamera(pos[0], pos[1], pos[2]);
+  document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-' + view)?.classList.add('active');
+};
+
+window.setMode = (m) => {
+  document.querySelectorAll('.btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-orbit').classList.add('active');
+};
+
+window.toggleAnim = () => {
+  animRunning = !animRunning;
+  const btn = document.getElementById('btn-anim');
+  btn.classList.toggle('active', animRunning);
+  btn.textContent = animRunning ? 'Stop' : 'Animate';
+};
+
+function animateCamera(tx, ty, tz) {
+  const start = camera.position.clone();
+  const end = new THREE.Vector3(tx, ty, tz);
+  let t = 0;
+  const step = () => {
+    t += 0.02;
+    camera.position.lerpVectors(start, end, Math.min(t, 1));
+    controls.update();
+    if (t < 1) requestAnimationFrame(step);
+  };
+  step();
+}
+
+/* ─── Poly count ────────────────────────────────────────── */
+let triCount = 0;
+scene.traverse(obj => {
+  if (obj.isMesh && obj.geometry) {
+    const idx = obj.geometry.index;
+    triCount += idx ? idx.count / 3 : obj.geometry.attributes.position.count / 3;
+  }
+});
+document.getElementById('polycount').textContent = `~${Math.round(triCount / 1000)}K triangles`;
+
+/* ─── Breathing animation parts ────────────────────────── */
+// Collect torso y base
+const torsoParts = [torsoGroup, pelvisGroup];
+
+/* ─── Render loop ───────────────────────────────────────── */
+const clock = new THREE.Clock();
+let autoRotateAngle = 0;
+
+function render() {
+  requestAnimationFrame(render);
+  const delta = clock.getDelta();
+  const elapsed = clock.getElapsedTime();
+
+  if (animRunning) {
+    idleTime += delta;
+
+    // Subtle idle breathing — chest rises
+    torsoGroup.position.y = 1.8 + Math.sin(elapsed * 1.1) * 0.008;
+
+    // Gentle head look
+    headGroup.rotation.y = Math.sin(elapsed * 0.4) * 0.15;
+    headGroup.rotation.x = Math.sin(elapsed * 0.3) * 0.04;
+
+    // Arm subtle swing
+    robot.children.forEach(child => {
+      if (child.position.x > 0.4) {
+        // right arm
+        child.rotation.z = -0.05 + Math.sin(elapsed * 0.8) * 0.05;
+      } else if (child.position.x < -0.4) {
+        // left arm
+        child.rotation.z = 0.05 + Math.sin(elapsed * 0.8 + Math.PI) * 0.05;
+      }
+    });
+
+    // Orb pulse
+    orbLight.intensity = 1.4 + Math.sin(elapsed * 2.2) * 0.4;
+    visorLight.intensity = 1.0 + Math.sin(elapsed * 3.0) * 0.3;
+    (orbCore.material).emissiveIntensity = 0.3 + Math.sin(elapsed * 2.2) * 0.2;
+    (glow.material).emissiveIntensity = 2.0 + Math.sin(elapsed * 3.0) * 0.8;
+
+    // Slow auto-rotate
+    autoRotateAngle += delta * 0.25;
+    robot.rotation.y = autoRotateAngle;
+  }
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+render();
+</script>
+</body>
+</html>
